@@ -21,7 +21,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 
-                <action android:name="com.seewo.appwidgettest.action.CLICK" />
+                <action android:name="word_widget_update" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

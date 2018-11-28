@@ -29,7 +29,7 @@ public class UpdateWordWidgetService extends Service {
         ComponentName componentName = new ComponentName(UpdateWordWidgetService.this, WordWidgetProvider.class);
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.widget_provider_word);
 
-        remoteViews.setTextViewText(R.id.text_view, "正在运行软件:" + runningTaskCount);
+//        remoteViews.setTextViewText(R.id., "正在运行软件:" + runningTaskCount);
 
         AppWidgetManager awm = AppWidgetManager.getInstance(getApplicationContext());
         awm.updateAppWidget(componentName, remoteViews);
