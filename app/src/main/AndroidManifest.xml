@@ -17,11 +17,13 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".WordWidgetProvider">
+        <receiver
+            android:name=".WordWidgetProvider"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 
-                <action android:name="word_widget_update" />
+                <action android:name="com.gzy.lifeassistant.WORD_WIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

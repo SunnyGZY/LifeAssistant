@@ -17,12 +17,14 @@ import android.widget.Toast;
  */
 public class WordWidgetProvider extends AppWidgetProvider {
 
+    public static final String WORD_WIDGET_UPDATE = "com.gzy.lifeassistant.WORD_WIDGET_UPDATE";
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (Global.Broadcast.WORD_WIDGET_UPDATE.equals(intent.getAction())) {
+        super.onReceive(context, intent);
+        if (WordWidgetProvider.WORD_WIDGET_UPDATE.equals(intent.getAction())) {
             Toast.makeText(context, "on refreshing", Toast.LENGTH_SHORT).show();
         }
-        super.onReceive(context, intent);
     }
 
     @Override
@@ -30,7 +32,7 @@ public class WordWidgetProvider extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_provider_word);
             Intent intent = new Intent(context, WordWidgetProvider.class);
-            intent.setAction(Global.Broadcast.WORD_WIDGET_UPDATE);
+            intent.setAction(WordWidgetProvider.WORD_WIDGET_UPDATE);
             remoteViews.setTextViewText(R.id.word_widget_word_text_view, "assign");
             remoteViews.setTextViewText(R.id.word_widget_phonetic_text_view, "英 [əˈsaɪn]  美 [əˈsaɪn]");
             remoteViews.setTextViewText(R.id.word_widget_paraphrase_text_view, "vt.分派，选派，分配；\n" +

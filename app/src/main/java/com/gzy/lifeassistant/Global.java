@@ -9,6 +9,5 @@ package com.gzy.lifeassistant;
 class Global {
 
     public interface Broadcast {
-        public static final String WORD_WIDGET_UPDATE = "word_widget_update";
     }
 }
