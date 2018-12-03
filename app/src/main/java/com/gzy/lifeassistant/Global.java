@@ -8,6 +8,4 @@ package com.gzy.lifeassistant;
  */
 class Global {
 
-    public interface Broadcast {
-    }
 }

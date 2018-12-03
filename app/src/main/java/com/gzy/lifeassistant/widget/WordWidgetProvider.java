@@ -1,4 +1,4 @@
-package com.gzy.lifeassistant;
+package com.gzy.lifeassistant.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+
+import com.gzy.lifeassistant.R;
 
 /**
  * 单词显示 widget

@@ -1,4 +1,4 @@
-package com.gzy.lifeassistant;
+package com.gzy.lifeassistant.service;
 
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -6,6 +6,9 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.IBinder;
 import android.widget.RemoteViews;
+
+import com.gzy.lifeassistant.R;
+import com.gzy.lifeassistant.widget.WordWidgetProvider;
 
 /**
  * widget 更新服务
@@ -25,11 +28,8 @@ public class UpdateWordWidgetService extends Service {
 
     @Override
     public void onCreate() {
-        int runningTaskCount = 1;
         ComponentName componentName = new ComponentName(UpdateWordWidgetService.this, WordWidgetProvider.class);
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.widget_provider_word);
-
-//        remoteViews.setTextViewText(R.id., "正在运行软件:" + runningTaskCount);
 
         AppWidgetManager awm = AppWidgetManager.getInstance(getApplicationContext());
         awm.updateAppWidget(componentName, remoteViews);
