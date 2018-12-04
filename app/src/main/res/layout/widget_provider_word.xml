@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    android:padding="10dp">
+    android:background="@color/colorGray_cc"
+    android:padding="10dp"
+    tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,34 +16,54 @@
             android:id="@+id/word_widget_word_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textColor="@color/colorGray_33"
+            android:textSize="20sp"
+            android:textStyle="bold"
             tools:text="software" />
 
         <TextView
             android:id="@+id/word_widget_phonetic_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorGray_33"
+            android:textSize="14sp"
             tools:text="[fəˈnɛtɪk]" />
 
         <TextView
             android:id="@+id/word_widget_paraphrase_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:lineSpacingMultiplier="1.1"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
             tools:text="n. 软件" />
-
-        <TextView
-            android:id="@+id/word_widget_tag_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="距离四级考试还有266天" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/word_widget_count_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"
+        tools:text="3/50" />
+
+    <TextView
+        android:id="@+id/word_widget_tag_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        tools:text="tags" />
 
     <ImageView
         android:id="@+id/word_widget_refresh_image_view"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="end"
+        android:padding="10dp"
         android:src="@drawable/widget_word_refresh"
         tools:ignore="ContentDescription" />
 </FrameLayout>

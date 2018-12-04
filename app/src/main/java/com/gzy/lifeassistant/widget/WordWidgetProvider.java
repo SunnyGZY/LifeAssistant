@@ -29,21 +29,18 @@ public class WordWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (WordWidgetProvider.WORD_WIDGET_UPDATE.equals(intent.getAction())) {
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                AppWidgetManager appWidgetManger = AppWidgetManager
-                        .getInstance(context);
-                refreshView(context, appWidgetManger);
-            }
-        }
         super.onReceive(context, intent);
+        if (WordWidgetProvider.WORD_WIDGET_UPDATE.equals(intent.getAction())) {
+            AppWidgetManager appWidgetManger = AppWidgetManager
+                    .getInstance(context);
+            refreshView(context, appWidgetManger, true);
+        }
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        refreshView(context, appWidgetManager);
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+        refreshView(context, appWidgetManager, false);
     }
 
     @Override
@@ -66,12 +63,13 @@ public class WordWidgetProvider extends AppWidgetProvider {
         super.onDisabled(context);
     }
 
-    private void refreshView(Context context, AppWidgetManager appWidgetManager) {
+    private void refreshView(Context context, AppWidgetManager appWidgetManager, boolean nextIndex) {
         int wordIndex = SpUtils.getInt(context, Global.Sp.CURRENT_WORD_INDEX, 1) % 50;
+        int index = wordIndex == 0 ? 1 : wordIndex;
         DaoSession daoSession = App.getInstance().getDaoSession();
         WordBeanDao wordBeanDao = daoSession.getWordBeanDao();
         WordBean wordBean = wordBeanDao.queryBuilder()
-                .where(WordBeanDao.Properties.Id.eq(wordIndex))
+                .where(WordBeanDao.Properties.Id.eq(index))
                 .unique();
         if (wordBean == null) {
             return;
@@ -82,13 +80,16 @@ public class WordWidgetProvider extends AppWidgetProvider {
         remoteViews.setTextViewText(R.id.word_widget_phonetic_text_view, wordBean.getPhonetic());
         remoteViews.setTextViewText(R.id.word_widget_paraphrase_text_view, wordBean.getTrans());
         remoteViews.setTextViewText(R.id.word_widget_tag_text_view, wordBean.getTags());
+        remoteViews.setTextViewText(R.id.word_widget_count_text_view, String.valueOf(index) + "/50");
+
         Intent intent = new Intent(context, WordWidgetProvider.class);
         intent.setAction(WordWidgetProvider.WORD_WIDGET_UPDATE);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.word_widget_refresh_image_view, pendingIntent);
         appWidgetManager.updateAppWidget(new ComponentName(context, WordWidgetProvider.class), remoteViews);
-
-        SpUtils.putInt(context, Global.Sp.CURRENT_WORD_INDEX, ++wordIndex);
+        if (nextIndex) {
+            SpUtils.putInt(context, Global.Sp.CURRENT_WORD_INDEX, ++wordIndex);
+        }
     }
 }
