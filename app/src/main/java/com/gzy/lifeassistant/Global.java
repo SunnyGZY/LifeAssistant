@@ -6,6 +6,11 @@ package com.gzy.lifeassistant;
  * @author gaozongyang
  * @date 2018/11/28
  */
-class Global {
+public class Global {
 
+    public interface Sp {
+        String SP_NAME = "life_assistant_sp";
+
+        String CURRENT_WORD_INDEX = "current_word_index";
+    }
 }

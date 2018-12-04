@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Created by Sunny on 2018/12/3.
+ * assets 资源工具类
+ *
+ * @author gaozongyang
+ * @date 2018/12/4
  */
-
 public class AssetsUtils {
     /**
      * 从 assets 文件中读取字符串

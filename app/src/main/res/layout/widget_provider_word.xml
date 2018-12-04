@@ -32,9 +32,10 @@
             tools:text="n. 软件" />
 
         <TextView
+            android:id="@+id/word_widget_tag_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="距离四级考试还有266天" />
+            tools:text="距离四级考试还有266天" />
     </LinearLayout>
 
     <ImageView

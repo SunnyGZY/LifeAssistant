@@ -73,4 +73,15 @@ public class WordBean {
     public void setTags(String tags) {
         this.tags = tags;
     }
+
+    @Override
+    public String toString() {
+        return "WordBean{" +
+                "id=" + id +
+                ", word='" + word + '\'' +
+                ", trans='" + trans + '\'' +
+                ", phonetic='" + phonetic + '\'' +
+                ", tags='" + tags + '\'' +
+                '}';
+    }
 }

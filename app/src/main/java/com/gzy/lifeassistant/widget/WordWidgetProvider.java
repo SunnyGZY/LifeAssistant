@@ -3,13 +3,19 @@ package com.gzy.lifeassistant.widget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
+import com.gzy.lifeassistant.App;
+import com.gzy.lifeassistant.Global;
 import com.gzy.lifeassistant.R;
+import com.gzy.lifeassistant.model.db.DaoSession;
+import com.gzy.lifeassistant.model.db.WordBean;
+import com.gzy.lifeassistant.model.db.WordBeanDao;
+import com.gzy.lifeassistant.utils.SpUtils;
 
 /**
  * 单词显示 widget
@@ -23,27 +29,21 @@ public class WordWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
         if (WordWidgetProvider.WORD_WIDGET_UPDATE.equals(intent.getAction())) {
-            Toast.makeText(context, "on refreshing", Toast.LENGTH_SHORT).show();
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                AppWidgetManager appWidgetManger = AppWidgetManager
+                        .getInstance(context);
+                refreshView(context, appWidgetManger);
+            }
         }
+        super.onReceive(context, intent);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        for (int appWidgetId : appWidgetIds) {
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_provider_word);
-            Intent intent = new Intent(context, WordWidgetProvider.class);
-            intent.setAction(WordWidgetProvider.WORD_WIDGET_UPDATE);
-            remoteViews.setTextViewText(R.id.word_widget_word_text_view, "assign");
-            remoteViews.setTextViewText(R.id.word_widget_phonetic_text_view, "英 [əˈsaɪn]  美 [əˈsaɪn]");
-            remoteViews.setTextViewText(R.id.word_widget_paraphrase_text_view, "vt.分派，选派，分配；\n" +
-                    "n.受托者；");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.word_widget_refresh_image_view, pendingIntent);
-            appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
-        }
+        refreshView(context, appWidgetManager);
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
     @Override
@@ -64,5 +64,31 @@ public class WordWidgetProvider extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         super.onDisabled(context);
+    }
+
+    private void refreshView(Context context, AppWidgetManager appWidgetManager) {
+        int wordIndex = SpUtils.getInt(context, Global.Sp.CURRENT_WORD_INDEX, 1) % 50;
+        DaoSession daoSession = App.getInstance().getDaoSession();
+        WordBeanDao wordBeanDao = daoSession.getWordBeanDao();
+        WordBean wordBean = wordBeanDao.queryBuilder()
+                .where(WordBeanDao.Properties.Id.eq(wordIndex))
+                .unique();
+        if (wordBean == null) {
+            return;
+        }
+
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_provider_word);
+        remoteViews.setTextViewText(R.id.word_widget_word_text_view, wordBean.getWord());
+        remoteViews.setTextViewText(R.id.word_widget_phonetic_text_view, wordBean.getPhonetic());
+        remoteViews.setTextViewText(R.id.word_widget_paraphrase_text_view, wordBean.getTrans());
+        remoteViews.setTextViewText(R.id.word_widget_tag_text_view, wordBean.getTags());
+        Intent intent = new Intent(context, WordWidgetProvider.class);
+        intent.setAction(WordWidgetProvider.WORD_WIDGET_UPDATE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.word_widget_refresh_image_view, pendingIntent);
+        appWidgetManager.updateAppWidget(new ComponentName(context, WordWidgetProvider.class), remoteViews);
+
+        SpUtils.putInt(context, Global.Sp.CURRENT_WORD_INDEX, ++wordIndex);
     }
 }
