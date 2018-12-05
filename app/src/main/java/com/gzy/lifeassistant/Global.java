@@ -8,9 +8,4 @@ package com.gzy.lifeassistant;
  */
 public class Global {
 
-    public interface Sp {
-        String SP_NAME = "life_assistant_sp";
-
-        String CURRENT_WORD_INDEX = "current_word_index";
-    }
 }

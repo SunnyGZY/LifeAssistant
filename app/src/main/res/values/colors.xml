@@ -16,12 +16,6 @@
     <color name="colorFashion">#FF99FF</color>
     <!--优雅-->
     <color name="colorGrace">#C3D4E6</color>
-    <!--活泼,10%透明度-->
-    <color name="colorLively_10">#1AFFBB33</color>
-    <!--安全,10%透明度-->
-    <color name="colorSafe_10">#1A21D99B</color>
-    <!--热情,10%透明度-->
-    <color name="colorArdour_10">#1AFF7373</color>
 
     <!--灰色-->
     <color name="colorGray_f5">#F5F5F5</color>

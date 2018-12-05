@@ -23,14 +23,19 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-
                 <action android:name="com.gzy.lifeassistant.WORD_WIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/appwidget_provider" />
         </receiver>
+
         <service android:name=".service.UpdateWordWidgetService" />
+
+        <activity android:name=".ui.word.WordAssistantSettingActivity" />
+        <activity android:name=".ui.word.WordListActivity" />
+        <activity android:name=".ui.word.WordPlanSettingActivity"></activity>
     </application>
 
 </manifest>

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 
 import com.gzy.lifeassistant.App;
-import com.gzy.lifeassistant.Global;
 import com.gzy.lifeassistant.R;
 import com.gzy.lifeassistant.model.db.DaoSession;
 import com.gzy.lifeassistant.model.db.WordBean;
@@ -64,8 +63,9 @@ public class WordWidgetProvider extends AppWidgetProvider {
     }
 
     private void refreshView(Context context, AppWidgetManager appWidgetManager, boolean nextIndex) {
-        int wordIndex = SpUtils.getInt(context, Global.Sp.CURRENT_WORD_INDEX, 1) % 50;
-        int index = wordIndex == 0 ? 1 : wordIndex;
+        int wordPlan = SpUtils.getInt(context, SpUtils.WORD_PLAN, 15);
+        int wordIndex = SpUtils.getInt(context, SpUtils.CURRENT_WORD_INDEX, 1) % wordPlan;
+        int index = wordIndex == 0 ? wordPlan : wordIndex;
         DaoSession daoSession = App.getInstance().getDaoSession();
         WordBeanDao wordBeanDao = daoSession.getWordBeanDao();
         WordBean wordBean = wordBeanDao.queryBuilder()
@@ -80,7 +80,7 @@ public class WordWidgetProvider extends AppWidgetProvider {
         remoteViews.setTextViewText(R.id.word_widget_phonetic_text_view, wordBean.getPhonetic());
         remoteViews.setTextViewText(R.id.word_widget_paraphrase_text_view, wordBean.getTrans());
         remoteViews.setTextViewText(R.id.word_widget_tag_text_view, wordBean.getTags());
-        remoteViews.setTextViewText(R.id.word_widget_count_text_view, String.valueOf(index) + "/50");
+        remoteViews.setTextViewText(R.id.word_widget_count_text_view, String.valueOf(index) + "/" + wordPlan);
 
         Intent intent = new Intent(context, WordWidgetProvider.class);
         intent.setAction(WordWidgetProvider.WORD_WIDGET_UPDATE);
@@ -89,7 +89,7 @@ public class WordWidgetProvider extends AppWidgetProvider {
         remoteViews.setOnClickPendingIntent(R.id.word_widget_refresh_image_view, pendingIntent);
         appWidgetManager.updateAppWidget(new ComponentName(context, WordWidgetProvider.class), remoteViews);
         if (nextIndex) {
-            SpUtils.putInt(context, Global.Sp.CURRENT_WORD_INDEX, ++wordIndex);
+            SpUtils.putInt(context, SpUtils.CURRENT_WORD_INDEX, ++wordIndex);
         }
     }
 }

@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.gzy.lifeassistant.MainActivity"
+    tools:context="com.gzy.lifeassistant.ui.WordAssistantSettingActivity"
     tools:ignore="HardcodedText">
 
     <TextView
-        android:id="@+id/main_word_assistant_text_view"
+        android:id="@+id/setting_word_list_text_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/touch_effect"
         android:gravity="center_vertical"
         android:padding="13dp"
-        android:text="单词助手"
+        android:text="单词列表"
+        android:textColor="@color/colorGray_33"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/setting_word_plan_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_effect"
+        android:gravity="center_vertical"
+        android:padding="13dp"
+        android:text="每日计划"
         android:textColor="@color/colorGray_33"
         android:textSize="16sp" />
 </LinearLayout>

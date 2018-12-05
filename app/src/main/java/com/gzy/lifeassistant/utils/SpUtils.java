@@ -3,8 +3,6 @@ package com.gzy.lifeassistant.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.gzy.lifeassistant.Global;
-
 import java.util.Set;
 
 /**
@@ -14,6 +12,12 @@ import java.util.Set;
  * @date 2018/12/4
  */
 public class SpUtils {
+
+    private static final String SP_NAME = "life_assistant_sp";
+
+    public static final String CURRENT_WORD_INDEX = "current_word_index";
+
+    public static final String WORD_PLAN = "word_plan";
 
     /**
      * 存字符串
@@ -44,8 +48,8 @@ public class SpUtils {
      * 存字符串集合
      *
      * @param context 上下文
-     * @param key      键
-     * @param values   取值
+     * @param key     键
+     * @param values  取值
      */
     public static void putStrings(Context context, String key, Set<String> values) {
         SharedPreferences sp = getSharedPreferences(context);
@@ -56,7 +60,7 @@ public class SpUtils {
      * 取字符串集合
      *
      * @param context 上下文
-     * @param key      键
+     * @param key     键
      * @return 取值
      */
     public static Set<String> getStrings(Context context, String key) {
@@ -139,6 +143,6 @@ public class SpUtils {
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {
-        return context.getSharedPreferences(Global.Sp.SP_NAME, Context.MODE_PRIVATE);
+        return context.getSharedPreferences(SpUtils.SP_NAME, Context.MODE_PRIVATE);
     }
 }
