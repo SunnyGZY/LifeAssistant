@@ -35,7 +35,10 @@
 
         <activity android:name=".ui.word.WordAssistantSettingActivity" />
         <activity android:name=".ui.word.WordListActivity" />
-        <activity android:name=".ui.word.WordPlanSettingActivity"></activity>
+        <activity android:name=".ui.word.WordPlanSettingActivity" />
+        <activity
+            android:name=".ui.clock.ClockActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

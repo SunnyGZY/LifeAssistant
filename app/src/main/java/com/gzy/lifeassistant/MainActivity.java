@@ -12,6 +12,7 @@ import com.gzy.lifeassistant.model.WordBookBean;
 import com.gzy.lifeassistant.model.db.DaoSession;
 import com.gzy.lifeassistant.model.db.WordBean;
 import com.gzy.lifeassistant.model.db.WordBeanDao;
+import com.gzy.lifeassistant.ui.clock.ClockActivity;
 import com.gzy.lifeassistant.ui.word.WordAssistantSettingActivity;
 import com.gzy.lifeassistant.utils.AssetsUtils;
 
@@ -25,24 +26,23 @@ import java.lang.reflect.Type;
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private TextView mWordAssistantTextView;
+    private TextView mClockTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.main_word_assistant_text_view).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
         initView();
         initData();
     }
 
     private void initView() {
-        TextView textView = findViewById(R.id.main_word_assistant_text_view);
-        textView.setOnClickListener(this);
+        mWordAssistantTextView = findViewById(R.id.main_word_assistant_text_view);
+        mWordAssistantTextView.setOnClickListener(this);
+        mClockTextView = findViewById(R.id.main_clock_text_view);
+        mClockTextView.setOnClickListener(this);
     }
 
     private void initData() {
@@ -72,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.main_word_assistant_text_view:
                 startActivity(new Intent(this, WordAssistantSettingActivity.class));
+                break;
+            case R.id.main_clock_text_view:
+                startActivity(new Intent(this, ClockActivity.class));
                 break;
             default:
                 break;

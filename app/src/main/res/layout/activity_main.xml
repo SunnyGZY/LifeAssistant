@@ -17,4 +17,15 @@
         android:text="单词助手"
         android:textColor="@color/colorGray_33"
         android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/main_clock_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_effect"
+        android:gravity="center_vertical"
+        android:padding="13dp"
+        android:text="电子时钟"
+        android:textColor="@color/colorGray_33"
+        android:textSize="16sp" />
 </LinearLayout>
