@@ -10,14 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
+        <activity android:name=".MainActivity" />
         <receiver
             android:name=".widget.WordWidgetProvider"
             android:exported="false">
@@ -30,15 +23,22 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/appwidget_provider" />
         </receiver>
-
         <service android:name=".service.UpdateWordWidgetService" />
 
         <activity android:name=".ui.word.WordAssistantSettingActivity" />
         <activity android:name=".ui.word.WordListActivity" />
         <activity android:name=".ui.word.WordPlanSettingActivity" />
+
         <activity
             android:name=".ui.clock.ClockActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

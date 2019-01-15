@@ -24,4 +24,7 @@
     <color name="colorGray_99">#999999</color>
     <color name="colorGray_66">#666666</color>
     <color name="colorGray_33">#333333</color>
+
+    <!--纯透明色-->
+    <color name="colorTransparent">#00000000</color>
 </resources>
