@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.gzy.lifeassistant.ui.WordAssistantSettingActivity"
+    tools:context="com.gzy.lifeassistant.ui.word.WordAssistantSettingActivity"
     tools:ignore="HardcodedText">
 
     <TextView
         android:id="@+id/setting_word_list_text_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_effect"
+        android:background="@drawable/touch_effect_bg"
         android:gravity="center_vertical"
         android:padding="13dp"
         android:text="单词列表"
@@ -23,7 +23,7 @@
         android:id="@+id/setting_word_plan_text_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_effect"
+        android:background="@drawable/touch_effect_bg"
         android:gravity="center_vertical"
         android:padding="13dp"
         android:text="每日计划"

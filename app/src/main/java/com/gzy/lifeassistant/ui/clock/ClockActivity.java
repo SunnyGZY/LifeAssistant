@@ -1,5 +1,6 @@
 package com.gzy.lifeassistant.ui.clock;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +26,10 @@ public class ClockActivity extends Activity {
     private static final int REFRESH_TIME = 0x01;
 
     /**
+     * 显示AM PM
+     */
+    private TextView mMomentTextView;
+    /**
      * 显示当前时间
      */
     private TextView mClockTextView;
@@ -41,6 +46,7 @@ public class ClockActivity extends Activity {
     private void initView() {
         // 屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mMomentTextView = findViewById(R.id.moment_text_view);
         mClockTextView = findViewById(R.id.clock_text_view);
     }
 
@@ -54,11 +60,19 @@ public class ClockActivity extends Activity {
     /**
      * 显示当前时间
      */
+    @SuppressLint("SetTextI18n")
     private void showCurrentTime() {
         Calendar calendar = Calendar.getInstance();
+        int constantly = calendar.get(Calendar.AM_PM);
         int hour = calendar.get(Calendar.HOUR);
         int minute = calendar.get(Calendar.MINUTE);
         int second = calendar.get(Calendar.SECOND);
+        if (constantly == 0) {
+            mMomentTextView.setText("AM");
+        } else {
+            mMomentTextView.setText("PM");
+        }
+
         String currentTime;
         if (second < 10) {
             currentTime = hour + ":" + minute + ":0" + second;
