@@ -60,7 +60,7 @@ public class ClockActivity extends Activity {
         int minute = calendar.get(Calendar.MINUTE);
         int second = calendar.get(Calendar.SECOND);
         String currentTime;
-        if (second <= 10) {
+        if (second < 10) {
             currentTime = hour + ":" + minute + ":0" + second;
         } else {
             currentTime = hour + ":" + minute + ":" + second;
