@@ -73,14 +73,25 @@ public class ClockActivity extends Activity {
             mMomentTextView.setText("PM");
         }
 
-        String currentTime;
-        if (second < 10) {
-            currentTime = hour + ":" + minute + ":0" + second;
-        } else {
-            currentTime = hour + ":" + minute + ":" + second;
-        }
+        String currentTime = hour + ":" + formatNumber(minute) + ":" + formatNumber(second);
         mClockTextView.setText(currentTime);
         handler.sendEmptyMessageDelayed(REFRESH_TIME, 1000);
+    }
+
+    /**
+     * 格式化数字
+     *
+     * @param num 如果num为个位数，则在前面添加0
+     * @return 格式化后的String
+     */
+    private String formatNumber(int num) {
+        String string;
+        if (num < 10) {
+            string = "0" + num;
+        } else {
+            string = String.valueOf(num);
+        }
+        return string;
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
