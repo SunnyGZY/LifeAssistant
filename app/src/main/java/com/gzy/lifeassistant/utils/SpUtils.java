@@ -15,10 +15,6 @@ public class SpUtils {
 
     private static final String SP_NAME = "life_assistant_sp";
 
-    public static final String CURRENT_WORD_INDEX = "current_word_index";
-
-    public static final String WORD_PLAN = "word_plan";
-
     /**
      * 存字符串
      *

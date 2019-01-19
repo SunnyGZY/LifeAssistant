@@ -67,6 +67,7 @@ public class ClockActivity extends Activity {
         int hour = calendar.get(Calendar.HOUR);
         int minute = calendar.get(Calendar.MINUTE);
         int second = calendar.get(Calendar.SECOND);
+
         if (constantly == 0) {
             mMomentTextView.setText("AM");
         } else {
