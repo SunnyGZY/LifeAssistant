@@ -26,4 +26,10 @@
         android:textSize="30sp"
         tools:text="AM" />
 
+    <TextView
+        android:id="@+id/log_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
 </RelativeLayout>

@@ -2,12 +2,15 @@ package com.gzy.lifeassistant.ui.clock;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.KeyguardManager;
+import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -37,12 +40,8 @@ public class ClockActivity extends Activity {
      */
     private TextView mClockTextView;
 
-    private static final String TAG = "AudioRecord";
-    static final int SAMPLE_RATE_IN_HZ = 8000;
-    static final int BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLE_RATE_IN_HZ, AudioFormat.CHANNEL_IN_DEFAULT, AudioFormat.ENCODING_PCM_16BIT);
-    AudioRecord mAudioRecord;
-    boolean isGetVoiceRun = false;
-    Object mLock;
+    private TextView mLogTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,60 +50,19 @@ public class ClockActivity extends Activity {
 
         initView();
         startTiming();
-        mLock = new Object();
 
-        getNoiseLevel();
+        demo();
     }
 
-    public void getNoiseLevel() {
-        if (isGetVoiceRun) {
-            Log.e(TAG, "还在录着呢");
-            return;
-        }
-        mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                SAMPLE_RATE_IN_HZ, AudioFormat.CHANNEL_IN_DEFAULT,
-                AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE);
-
-        isGetVoiceRun = true;
-
-        // TODO: 2019/1/21 不要显式创建线程，请使用线程池
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mAudioRecord.startRecording();
-                short[] buffer = new short[BUFFER_SIZE];
-                while (isGetVoiceRun) {
-                    //r是实际读取的数据长度，一般而言r会小于buffersize
-                    int r = mAudioRecord.read(buffer, 0, BUFFER_SIZE);
-                    long v = 0;
-                    // 将 buffer 内容取出，进行平方和运算
-                    for (int i = 0; i < buffer.length; i++) {
-                        v += buffer[i] * buffer[i];
-                    }
-                    // 平方和除以数据总长度，得到音量大小。
-                    double mean = v / (double) r;
-                    double volume = 10 * Math.log10(mean);
-                    Log.d(TAG, "分贝值:" + volume);
-                    // 大概一秒十次
-                    synchronized (mLock) {
-                        try {
-                            mLock.wait(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        mAudioRecord.stop();
-                        mAudioRecord.release();
-                        mAudioRecord = null;
-                    }
-                }
-            }
-        }).run();
+    private void demo() {
+        AudioRecordDemo audioRecordDemo = new AudioRecordDemo(this);
+        audioRecordDemo.getNoiseLevel();
     }
-
 
     private void initView() {
         mMomentTextView = findViewById(R.id.moment_text_view);
         mClockTextView = findViewById(R.id.clock_text_view);
+        mLogTextView = findViewById(R.id.log_text_view);
     }
 
     /**
@@ -159,10 +117,39 @@ public class ClockActivity extends Activity {
             switch (msg.what) {
                 case REFRESH_TIME:
                     showCurrentTime();
+                case 0x02:
+                    Bundle bundle = msg.getData();
+                    double volue = bundle.getDouble("VOLUME");
+                    mLogTextView.setText(String.valueOf(volue));
+                    if (volue >= 50) {
+                        screenOn();
+                    }
                 default:
                     break;
             }
             return true;
         }
     });
+
+    public static final String tag = "myapp:mywakelocktag";
+
+    private void screenOn() {
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        boolean screenOn = pm.isScreenOn();
+        if (!screenOn) {
+            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, tag);
+            wl.acquire(10000);
+            wl.release();
+        }
+
+        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+        KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("unLock");
+        keyguardLock.reenableKeyguard();
+        keyguardLock.disableKeyguard();
+    }
+
+
+    public Handler getHandler() {
+        return handler;
+    }
 }
