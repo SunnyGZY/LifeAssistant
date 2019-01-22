@@ -1,12 +1,10 @@
 package com.gzy.lifeassistant.ui.clock;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +13,8 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.gzy.lifeassistant.R;
+import com.gzy.lifeassistant.permission.PermissionUtil;
+import com.gzy.lifeassistant.permission.RequestPermissionCallBack;
 
 import java.util.Calendar;
 
@@ -42,7 +42,6 @@ public class ClockActivity extends Activity {
 
     private TextView mLogTextView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,11 +49,24 @@ public class ClockActivity extends Activity {
 
         initView();
         startTiming();
-
-        demo();
+        requestPermission();
     }
 
-    private void demo() {
+    private void requestPermission() {
+        PermissionUtil.requestPermission(this, new RequestPermissionCallBack() {
+            @Override
+            public void granted() {
+                startAudioRecord();
+            }
+
+            @Override
+            public void denied() {
+
+            }
+        }, Manifest.permission.RECORD_AUDIO);
+    }
+
+    private void startAudioRecord() {
         AudioRecordDemo audioRecordDemo = new AudioRecordDemo(this);
         audioRecordDemo.getNoiseLevel();
     }
