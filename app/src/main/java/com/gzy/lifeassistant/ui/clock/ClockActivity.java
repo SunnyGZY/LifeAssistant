@@ -13,7 +13,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.gzy.lifeassistant.R;
-import com.gzy.lifeassistant.permission.PermissionUtil;
+import com.gzy.lifeassistant.permission.PermissionManager;
 import com.gzy.lifeassistant.permission.RequestPermissionCallBack;
 
 import java.util.Calendar;
@@ -53,7 +53,8 @@ public class ClockActivity extends Activity {
     }
 
     private void requestPermission() {
-        PermissionUtil.requestPermission(this, new RequestPermissionCallBack() {
+        String[] permissions = new String[]{Manifest.permission.RECORD_AUDIO};
+        PermissionManager.requestPermission(this, permissions, new RequestPermissionCallBack() {
             @Override
             public void granted() {
                 startAudioRecord();
@@ -63,7 +64,7 @@ public class ClockActivity extends Activity {
             public void denied() {
 
             }
-        }, Manifest.permission.RECORD_AUDIO);
+        });
     }
 
     private void startAudioRecord() {

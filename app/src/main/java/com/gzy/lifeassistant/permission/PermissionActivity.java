@@ -19,11 +19,13 @@ import android.support.v7.app.AppCompatActivity;
  */
 public class PermissionActivity extends AppCompatActivity {
 
-    private static final int PERMISSION_REQUEST_CODE = 0x01;
+    public static final String PERMISSION_ARRAY = "permission_array";
+
+    public static final String PERMISSION_REQUEST_CODE = "permission_request_code";
 
     private String[] permissions;
+    private int permissionRequestCode;
     private RequestPermissionCallBack requestPermissionCallBack;
-    private String packageCodePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,31 +36,31 @@ public class PermissionActivity extends AppCompatActivity {
 
     private void initData() {
         Intent intent = getIntent();
-        permissions = intent.getStringArrayExtra("permission");
-        packageCodePath = intent.getStringExtra("packageCodePath");
-        requestPermissionCallBack = PermissionUtil.getRequestPermissionCallBack(packageCodePath);
-        ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+        permissions = intent.getStringArrayExtra(PERMISSION_ARRAY);
+        permissionRequestCode = intent.getIntExtra(PERMISSION_REQUEST_CODE, -1);
+        requestPermissionCallBack = PermissionManager.getRequestPermissionCallBack(permissionRequestCode);
+        ActivityCompat.requestPermissions(this, permissions, permissionRequestCode);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        boolean hasAllGranted = true;
         switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
+            case permissionRequestCode:
+                boolean allGranted = true;
                 for (int i = 0; i < grantResults.length; ++i) {
                     if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                        hasAllGranted = false;
+                        allGranted = false;
                         if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) {
                             goAppSettingDialog();
                         }
                     }
                 }
+                if (allGranted) {
+                    requestCallBack(true);
+                }
                 break;
             default:
                 break;
-        }
-        if (hasAllGranted) {
-            requestCallBack(true);
         }
     }
 
@@ -91,8 +93,8 @@ public class PermissionActivity extends AppCompatActivity {
                 }).show();
     }
 
-    private void requestCallBack(boolean isAllGranted) {
-        if (isAllGranted) {
+    private void requestCallBack(boolean allGranted) {
+        if (allGranted) {
             requestPermissionCallBack.granted();
             finish();
         } else {
@@ -104,6 +106,6 @@ public class PermissionActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        PermissionUtil.removeRequestPermissionCallBack(packageCodePath);
+        PermissionManager.removeRequestPermissionCallBack(permissionRequestCode);
     }
 }

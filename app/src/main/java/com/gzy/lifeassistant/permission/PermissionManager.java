@@ -14,21 +14,22 @@ import java.util.Map;
  * @author gaozongyang
  * @date 2019/1/22
  */
-public class PermissionUtil {
+public class PermissionManager {
 
-    private static Map<String, RequestPermissionCallBack> requestPermissionCallBackMap = new HashMap<>();
+    private static Map<Integer, RequestPermissionCallBack> requestPermissionCallBackMap = new HashMap<>();
 
-    public static void requestPermission(@NonNull Context context, @NonNull RequestPermissionCallBack callBack,
-                                         @NonNull String... permissions) {
+    public static void requestPermission(@NonNull Context context, @NonNull String[] permissions,
+                                         @NonNull RequestPermissionCallBack callBack) {
         if (hasPermission(context, permissions)) {
             callBack.granted();
         } else {
             Intent intent = new Intent(context, PermissionActivity.class);
-            intent.putExtra("permission", permissions);
-            intent.putExtra("packageCodePath", context.getPackageCodePath());
+            intent.putExtra(PermissionActivity.PERMISSION_ARRAY, permissions);
+            int uuid = 1;
+            intent.putExtra(PermissionActivity.PERMISSION_REQUEST_CODE, uuid);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
-            requestPermissionCallBackMap.put(context.getPackageCodePath(), callBack);
+            requestPermissionCallBackMap.put(uuid, callBack);
         }
     }
 
@@ -42,11 +43,11 @@ public class PermissionUtil {
         return isAllGranted;
     }
 
-    static RequestPermissionCallBack getRequestPermissionCallBack(String packageCodePath) {
-        return requestPermissionCallBackMap.get(packageCodePath);
+    static RequestPermissionCallBack getRequestPermissionCallBack(int requestCode) {
+        return requestPermissionCallBackMap.get(requestCode);
     }
 
-    static void removeRequestPermissionCallBack(String packageCodePath) {
+    static void removeRequestPermissionCallBack(int packageCodePath) {
         requestPermissionCallBackMap.remove(packageCodePath);
     }
 }
