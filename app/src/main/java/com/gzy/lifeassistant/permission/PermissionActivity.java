@@ -25,7 +25,7 @@ public class PermissionActivity extends AppCompatActivity {
 
     private String[] permissions;
     private int permissionRequestCode;
-    private RequestPermissionCallBack requestPermissionCallBack;
+    private RequestCallBack requestPermissionCallBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,44 +38,42 @@ public class PermissionActivity extends AppCompatActivity {
         Intent intent = getIntent();
         permissions = intent.getStringArrayExtra(PERMISSION_ARRAY);
         permissionRequestCode = intent.getIntExtra(PERMISSION_REQUEST_CODE, -1);
-        requestPermissionCallBack = PermissionManager.getRequestPermissionCallBack(permissionRequestCode);
+        requestPermissionCallBack = PermissionUtil.getRequestPermissionCallBack(permissionRequestCode);
         ActivityCompat.requestPermissions(this, permissions, permissionRequestCode);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case permissionRequestCode:
-                boolean allGranted = true;
-                for (int i = 0; i < grantResults.length; ++i) {
-                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                        allGranted = false;
-                        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) {
-                            goAppSettingDialog();
-                        }
+        if (requestCode == permissionRequestCode) {
+            for (int i = 0; i < grantResults.length; ++i) {
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    // 有用户选择了不再提醒的权限
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) {
+                        showGoAppSettingDialog();
+                    } else {
+                        requestCallBack(false);
                     }
+                    return;
                 }
-                if (allGranted) {
-                    requestCallBack(true);
-                }
-                break;
-            default:
-                break;
+            }
         }
+        requestCallBack(true);
     }
 
-    private void goAppSettingDialog() {
+    private void showGoAppSettingDialog() {
         new AlertDialog.Builder(this).setTitle("PermissionTest")
                 .setMessage("获取相关权限失败:" +
                         "将导致部分功能无法正常使用，需要到设置页面手动授权")
                 .setPositiveButton("去授权", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        // TODO: 19-1-23 此处如何监听到用户授予权限？
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         Uri uri = Uri.fromParts("package", getApplicationContext().getPackageName(), null);
                         intent.setData(uri);
                         startActivity(intent);
                         dialog.dismiss();
+                        finish();
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -93,10 +91,15 @@ public class PermissionActivity extends AppCompatActivity {
                 }).show();
     }
 
+    /**
+     * 回调接口
+     *
+     * @param allGranted true 全部授权
+     *                   false 未全部授权
+     */
     private void requestCallBack(boolean allGranted) {
         if (allGranted) {
             requestPermissionCallBack.granted();
-            finish();
         } else {
             requestPermissionCallBack.denied();
         }
@@ -106,6 +109,6 @@ public class PermissionActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        PermissionManager.removeRequestPermissionCallBack(permissionRequestCode);
+        PermissionUtil.removeRequestPermissionCallBack(permissionRequestCode);
     }
 }

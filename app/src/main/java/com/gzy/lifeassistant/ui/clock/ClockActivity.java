@@ -11,10 +11,11 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gzy.lifeassistant.R;
-import com.gzy.lifeassistant.permission.PermissionManager;
-import com.gzy.lifeassistant.permission.RequestPermissionCallBack;
+import com.gzy.lifeassistant.permission.PermissionUtil;
+import com.gzy.lifeassistant.permission.RequestCallBack;
 
 import java.util.Calendar;
 
@@ -54,7 +55,7 @@ public class ClockActivity extends Activity {
 
     private void requestPermission() {
         String[] permissions = new String[]{Manifest.permission.RECORD_AUDIO};
-        PermissionManager.requestPermission(this, permissions, new RequestPermissionCallBack() {
+        PermissionUtil.requestPermission(this, permissions, new RequestCallBack() {
             @Override
             public void granted() {
                 startAudioRecord();
@@ -62,7 +63,7 @@ public class ClockActivity extends Activity {
 
             @Override
             public void denied() {
-
+                Toast.makeText(ClockActivity.this, "未获取到麦克风权限，无法自动唤醒", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -6,7 +6,7 @@ package com.gzy.lifeassistant.permission;
  * @author gaozongyang
  * @date 2019/1/22
  */
-public interface RequestPermissionCallBack {
+public interface RequestCallBack {
     /**
      * 同意授权
      */
