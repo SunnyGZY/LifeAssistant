@@ -4,9 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.content.PermissionChecker;
+import android.util.SparseArray;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -17,7 +16,7 @@ import java.util.Random;
  */
 public class PermissionUtil {
 
-    private static Map<Integer, RequestCallBack> requestPermissionCallBackMap = new HashMap<>();
+    private static SparseArray<RequestCallBack> requestPermissionCallBackMap = new SparseArray<>();
 
     public static void requestPermission(@NonNull Context context, @NonNull String[] permissions,
                                          @NonNull RequestCallBack callBack) {
@@ -48,7 +47,7 @@ public class PermissionUtil {
         int num;
         do {
             num = new Random().nextInt(1000);
-        } while (requestPermissionCallBackMap.containsKey(num));
+        } while (requestPermissionCallBackMap.get(num) != null);
         return num;
     }
 
