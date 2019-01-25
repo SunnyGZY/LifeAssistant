@@ -13,9 +13,9 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gzy.easypermission.PermissionUtil;
+import com.gzy.easypermission.RequestCallBack;
 import com.gzy.lifeassistant.R;
-import com.gzy.lifeassistant.permission.PermissionUtil;
-import com.gzy.lifeassistant.permission.RequestCallBack;
 
 import java.util.Calendar;
 
