@@ -9,13 +9,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gzy.easypermission.PermissionUtil;
 import com.gzy.easypermission.RequestCallBack;
 import com.gzy.lifeassistant.R;
+import com.gzy.lifeassistant.manager.AudioRecordManager;
 
 import java.util.Calendar;
 
@@ -25,12 +25,22 @@ import java.util.Calendar;
  * @author gaozongyang
  * @date 2019/1/5
  */
-public class ClockActivity extends Activity {
+public class ClockActivity extends Activity implements AudioRecordManager.AudioRecordCallBack {
 
     /**
-     * 刷新时间
+     * 刷新显示的时间
      */
-    private static final int REFRESH_TIME = 0x01;
+    private static final int REFRESH_SHOW_TIME = 0x01;
+    /**
+     * 接收到当前录音分贝
+     */
+    public static final int RECEIVE_VOLUME_DECIBEL = 0x02;
+
+    public static final String VOLUME_DECIBEL = "volume_decibel";
+
+    private static final int VOLUME_DECIBEL_TOPLIMIT = 50;
+
+    public static final String TAG = "myapp:mywakelocktag";
 
     /**
      * 显示AM PM
@@ -42,6 +52,33 @@ public class ClockActivity extends Activity {
     private TextView mClockTextView;
 
     private TextView mLogTextView;
+    /**
+     * 录音管理器
+     */
+    private AudioRecordManager mAudioRecordManager;
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case REFRESH_SHOW_TIME:
+                    showCurrentTime();
+                    break;
+                case RECEIVE_VOLUME_DECIBEL:
+                    Bundle bundle = msg.getData();
+                    int volueDecibel = bundle.getInt(VOLUME_DECIBEL);
+                    mLogTextView.setText(String.valueOf(volueDecibel));
+                    if (volueDecibel >= VOLUME_DECIBEL_TOPLIMIT) {
+                        screenOn();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,27 +87,7 @@ public class ClockActivity extends Activity {
 
         initView();
         startTiming();
-        requestPermission();
-    }
-
-    private void requestPermission() {
-        String[] permissions = new String[]{Manifest.permission.RECORD_AUDIO};
-        PermissionUtil.requestPermission(this, permissions, new RequestCallBack() {
-            @Override
-            public void granted() {
-                startAudioRecord();
-            }
-
-            @Override
-            public void denied() {
-                Toast.makeText(ClockActivity.this, "未获取到麦克风权限，无法自动唤醒", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void startAudioRecord() {
-        AudioRecordDemo audioRecordDemo = new AudioRecordDemo(this);
-        audioRecordDemo.getNoiseLevel();
+        startAudioRecord();
     }
 
     private void initView() {
@@ -83,7 +100,23 @@ public class ClockActivity extends Activity {
      * 开始计时
      */
     private void startTiming() {
-        handler.sendEmptyMessage(REFRESH_TIME);
+        mHandler.sendEmptyMessage(REFRESH_SHOW_TIME);
+    }
+
+    private void startAudioRecord() {
+        String[] permissions = new String[]{Manifest.permission.RECORD_AUDIO};
+        PermissionUtil.requestPermission(this, permissions, new RequestCallBack() {
+            @Override
+            public void granted() {
+                mAudioRecordManager = new AudioRecordManager(ClockActivity.this);
+                mAudioRecordManager.startRecord();
+            }
+
+            @Override
+            public void denied() {
+                Toast.makeText(ClockActivity.this, "未获取到麦克风权限，无法自动唤醒", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
@@ -104,8 +137,7 @@ public class ClockActivity extends Activity {
 
         String currentTime = hour + ":" + formatNumber(minute) + ":" + formatNumber(second);
         mClockTextView.setText(currentTime);
-        Log.e("gzy", currentTime);
-        handler.sendEmptyMessageDelayed(REFRESH_TIME, 1000);
+        mHandler.sendEmptyMessageDelayed(REFRESH_SHOW_TIME, 1000);
     }
 
     /**
@@ -124,34 +156,12 @@ public class ClockActivity extends Activity {
         return string;
     }
 
-    private Handler handler = new Handler(new Handler.Callback() {
-
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case REFRESH_TIME:
-                    showCurrentTime();
-                case 0x02:
-                    Bundle bundle = msg.getData();
-                    double volue = bundle.getDouble("VOLUME");
-                    mLogTextView.setText(String.valueOf(volue));
-                    if (volue >= 50) {
-                        screenOn();
-                    }
-                default:
-                    break;
-            }
-            return true;
-        }
-    });
-
-    public static final String tag = "myapp:mywakelocktag";
-
     private void screenOn() {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         boolean screenOn = pm.isScreenOn();
         if (!screenOn) {
-            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, tag);
+            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP
+                    | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
             wl.acquire(10000);
             wl.release();
         }
@@ -162,8 +172,19 @@ public class ClockActivity extends Activity {
         keyguardLock.disableKeyguard();
     }
 
+    @Override
+    public void volumeDecibel(int volumeDecibel) {
+        Message message = new Message();
+        message.what = RECEIVE_VOLUME_DECIBEL;
+        Bundle bundle = new Bundle();
+        bundle.putInt(VOLUME_DECIBEL, volumeDecibel);
+        message.setData(bundle);
+        mHandler.sendMessage(message);
+    }
 
-    public Handler getHandler() {
-        return handler;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mAudioRecordManager.stopRecord();
     }
 }
