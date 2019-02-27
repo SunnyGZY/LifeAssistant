@@ -1,6 +1,9 @@
 package com.gzy.lifeassistant;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
+
+import com.taobao.sophix.SophixManager;
 
 /**
  * App
@@ -8,6 +11,7 @@ import android.app.Application;
  * @author gaozongyang
  * @date 2018/12/3
  */
+@SuppressLint("Registered")
 public class App extends Application {
 
     private static App instance;
@@ -16,6 +20,9 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+
+        // 检查热更新
+        SophixManager.getInstance().queryAndLoadNewPatch();
     }
 
     /**

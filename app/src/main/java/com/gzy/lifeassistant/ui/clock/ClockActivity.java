@@ -16,6 +16,7 @@ import com.gzy.easypermission.PermissionUtil;
 import com.gzy.easypermission.RequestCallBack;
 import com.gzy.lifeassistant.R;
 import com.gzy.lifeassistant.manager.AudioRecordManager;
+import com.taobao.sophix.SophixManager;
 
 import java.util.Calendar;
 
@@ -138,6 +139,11 @@ public class ClockActivity extends Activity implements AudioRecordManager.AudioR
         String currentTime = hour + ":" + formatNumber(minute) + ":" + formatNumber(second);
         mClockTextView.setText(currentTime);
         mHandler.sendEmptyMessageDelayed(REFRESH_SHOW_TIME, 1000);
+
+        if (minute == 0 && second == 0) {
+            // 检查热更新
+            SophixManager.getInstance().queryAndLoadNewPatch();
+        }
     }
 
     /**
